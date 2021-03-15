@@ -114,6 +114,8 @@ float L2 = 65;
 float z1 = 17;
 float z2 = 76;
 
+
+
 struct PositionXYXY{
 	PositionXY positionxy1;
 	PositionXY positionxy2;
@@ -230,6 +232,7 @@ void motorInit(void){
 	motor[1].testVel = 150;
 	motor[2].testVel = -150;
 	motor[3].testVel = -150;
+
 }
 
 
@@ -257,17 +260,17 @@ void targetPositionAll_Callback(std_msgs::Float32MultiArray targetPositionAllMes
 	
 }
 
-// void targetVelocity_Callback(std_msgs::Float32 targetVelocityMessage){
-// 	int ID = 0;
-// 	motor[ID].targetVelocity = targetVelocityMessage.data;
-// }
-
-
-void targetVelocity_Callback(std_msgs::Float32MultiArray targetVelocityMessage){
-
-	motor[0].targetVelocity = targetVelocityMessage.data[0];
-	motor[1].targetVelocity = targetVelocityMessage.data[1];
+void targetVelocity_Callback(std_msgs::Float32 targetVelocityMessage){
+	int ID = 0;
+	motor[ID].targetVelocity = targetVelocityMessage.data;
 }
+
+
+// void targetVelocity_Callback(std_msgs::Float32MultiArray targetVelocityMessage){
+
+// 	motor[0].targetVelocity = targetVelocityMessage.data[0];
+// 	motor[1].targetVelocity = targetVelocityMessage.data[1];
+// }
 
 void mode_Callback(std_msgs::Int8 modeMessage)
 {
@@ -482,7 +485,7 @@ void rxThread(int s)
 					printf("limitmotor0 is %d %d;",motor[0].limit_0,motor[0].limit_1);
 					printf("limitmotor1 is %d %d;",motor[1].limit_0,motor[1].limit_1);
 					printf("limitmotor2 is %d %d;",motor[2].limit_0,motor[2].limit_1);
-					printf("limitmotor3 is %d %d\n;",motor[3].limit_0,motor[3].limit_1);
+					printf("limitmotor3 is %d %d;\n",motor[3].limit_0,motor[3].limit_1);
 					break;
 
 				case 7:
@@ -502,7 +505,7 @@ void rxThread(int s)
 
                     break;
 				case 9:
-					printf("mode is %d; ",mode);
+					printf("mode is %d; ",mode);printf("tra is %d; ",tra);
 					printf("l1 a1 a2 a3 a4 are: %f %f %f %f;",AngleL1.angle1,AngleL1.angle2,AngleL2.angle1,AngleL2.angle2);
 					//printf("a1_ini a2_ini a3_ini a4_ini are :%f %f %f %f;",angle1Ini,angle2Ini,angle3Ini,angle4Ini);
 					printf("tp are %d %d %d %d;\n",motor[0].targetPosition,motor[1].targetPosition,motor[2].targetPosition,motor[3].targetPosition);
@@ -656,6 +659,7 @@ void txThread(int s)
 	sendIMessage.data.resize(4);
 	xyMessage.data.resize(4);
 	xy2Message.data.resize(4);
+	float x1,y1,x2,y2;
 
 	for (j = 0; j < 4; j++)
 	{
@@ -681,7 +685,6 @@ void txThread(int s)
 				break;
 			case 3:
 				controlV_calSendI_PI(0);
-				controlV_calSendI_PI(1);
 				break;
 			case 4:
 				controlP_calSendI_PPI(0);
@@ -725,7 +728,7 @@ void txThread(int s)
                 break;
 			case 9:
 				getLimit();
-				float x1,y1,x2,y2;
+				
 				if (order[4] == 1 && flag == 1) 
 				{
 					switch (tra)
@@ -737,7 +740,7 @@ void txThread(int s)
 							y2 = 60;
 							break;
 						case 1:
-							x1 = 20+40*sin(float(t)/5.0/(2*M_PI));
+							x1 = 20+30*sin(float(t)/5.0/(2*M_PI));
 							y1 = 60;
 							x2 = -x1;
 							y2 = y1;
@@ -750,23 +753,56 @@ void txThread(int s)
 							y2 = y1;
 							break;
 						case 3:
+							x1 = 10;
+							y1 = 60;
+							x2 = -x1;
+							y2 = 60;
+							break;
 
+						case 4:
+							x1 = 20;
+							y1 = 60;
+							x2 = -x1;
+							y2 = 60;
+							break;
+						case 5:
+							x1 = 30;
+							y1 = 60;
+							x2 = -x1;
+							y2 = 60;
+							break;
+
+						case 6:
+							x1 = 35;
+							y1 = 60;
+							x2 = -x1;
+							y2 = 60;
+							break;
+						case 7:
+							x1 = 40;
+							y1 = 60;
+							x2 = -x1;
+							y2 = 60;
+							break;
+						case 8:
+							x1 = 45;
+							y1 = 60;
+							x2 = -x1;
+							y2 = 60;
+							break;
+						case 9:
+							x1 = 50;
+							y1 = 60;
+							x2 = -x1;
+							y2 = 60;
 							break;
 						default:
 							tra = 0;
 
 					}
-					// x1 = 0;
-					// x1 = 20+30*sin(float(t)/5.0/(2*M_PI));
-					// y1 = 60;
-					// // y1 = 60 + 15*sin(float(t)/10.0/(2*M_PI));
-					
-					// // y2 = 60;
-					// x2 = -x1;
-					// y2 = y1;
 
 					xy2motorTargetPosition(x1,y1,x2,y2);
-					// TODO 这里添加正运动学并发布消息
+					
 					p = motorPosition2xy();
 					xyMessage.data[0] = x1;
 					xyMessage.data[1] = y1;

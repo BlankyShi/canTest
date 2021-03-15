@@ -21,9 +21,6 @@ include_directories(
 add_executable(canTest1 src/canTest1.cpp)
 target_link_libraries(canTest1 ${catkin_LIBRARIES})
 
-add_executable(rosTest1 src/rosTest1.cpp)
-target_link_libraries(rosTest1 ${catkin_LIBRARIES})
-
 add_executable(canTest2 src/canTest2.cpp)
 target_link_libraries(canTest2 ${catkin_LIBRARIES})
 
